@@ -1,17 +1,31 @@
-function mergeOverlappers(inputArr, idx = 0) {
-    if (idx == inputArr.length - 1) return inputArr;
-
-    let curr = inputArr[idx];
-    let next = inputArr[idx + 1];
-
-    if (checkOverlap(curr, next)) {
-        // merge them
+/**
+ * Computes the sum of intervals.
+ * Overlapping intervals are combined into one.
+ * @param {array} intervals Array of intervals eg. [ [1,3],[4,6] ]
+ */
+function sumIntervals(intervals){
+    intervals.sort((a, b) => a[1] - b[1]);
+  
+    // Create an array of [min1, min2]
+    let finalSorted = intervals.slice()
+      .sort((a, b) => a[0] - b[0])
+      .map((val, idx) => [val[0], intervals[idx][1]]);
+    
+    let total = 0;
+    
+    // Compare each inner pair and sum if necessary
+    for (let i = finalSorted.length - 1; i >= 0; i--) {
+        if (i === 0) {
+            total += finalSorted[i][1] - finalSorted[i][0];
+            break;
+        }
+    
+        if (finalSorted[i][0] < finalSorted[i - 1][1]) {
+            finalSorted[i - 1][1] = finalSorted[i][1];
+        } else {
+            total += finalSorted[i][1] - finalSorted[i][0];   
+        }
     }
-
-    mergeOverlappers(idx + 1);
-}
-
-function checkOverlap(pairOne, pairTwo) {
-    return (pairOne[1] > pairTwo[0] && pairOne[0] < pairTwo[1]) ||
-        (pairTwo[1] > pairOne[0] && pairTwo[1] < pairOne[1]);
+    
+    return total;
 }
