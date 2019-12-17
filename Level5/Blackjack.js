@@ -9,9 +9,8 @@
  * NOTE: No validation. I'm aiming for less code
  */
 
-function scoreHand(cards) {
-
-    const score = cards.reduce((acc, curr) => isNaN(curr)
+const scoreHand = cards => {
+    let score = cards.reduce((acc, curr) => isNaN(curr)
         ? curr === 'A'
             ? acc + 11
             : acc + 10
