@@ -13,8 +13,9 @@ function packBagpack(scores, weights, capacity) {
 
     // Fill table with zeros
     for (let i = 0; i <= scores.length; i++) {
+        if (typeof table[i] === 'undefined') table[i] = [];
+
         for (let j = 0; j <= capacity; j++) {
-            if (typeof table[i] === 'undefined') table[i] = [];
 
             table[i][j] = 0;
         }
