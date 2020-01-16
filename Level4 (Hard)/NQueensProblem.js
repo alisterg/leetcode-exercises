@@ -19,7 +19,47 @@ function queens(position, size) {
         return null;
     }
 
+    // First we need to parse the starting position into an array
+
     return "a1";
+}
+
+/**
+ * Converts a string into a pair eg. 'a3' into [1,3]
+ * @param {string} coordinates 
+ */
+function parsePosition(coordinates) {
+    const arr = coordinates.split('');
+
+    // 'J' is column 10 (represented by zero)
+    arr[0] = arr[0].toLowerCase() === 'j' ?
+        arr[0].toLowerCase().charCodeAt() - 96 :
+        0;
+
+    arr[1] = Number(arr[1]);
+
+    return arr;
+}
+
+/**
+ * Converts a pair into a string eg. [1,3] into 'a3'
+ * @param {Array} coordinates 
+ */
+function stringifyPosition(coordinates) {
+
+    if (coordinates[0] === 0) {
+        coordinates[0] = 10;
+    }
+
+    if (coordinates[1] === 10) {
+        coordinates[1] = 0;
+    }
+
+    return [
+        (coordinates[0] + 9).toString(36),
+        coordinates[1]
+    ].join('');
+
 }
 
 // probably use the constraint programming solution https://developers.google.com/optimization/cp/queens
