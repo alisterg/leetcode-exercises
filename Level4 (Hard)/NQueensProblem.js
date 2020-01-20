@@ -42,7 +42,8 @@ function parsePosition(coordinates) {
 }
 
 /**
- * Converts a pair into a string eg. [1,3] into 'a3'
+ * Converts a pair into a string eg. [1,3] into 'a3'.
+ * If pair[0] is '0', then it converts it to 'j'
  * @param {Array} coordinates 
  */
 function stringifyPosition(coordinates) {
@@ -64,3 +65,18 @@ function stringifyPosition(coordinates) {
 
 // probably use the constraint programming solution https://developers.google.com/optimization/cp/queens
 
+// We are given the first entry in the solution. Because of this, we can't use a stair-stepped
+// solution, or standard backtracking.
+
+
+// 1. Find the first solution
+//     if we have filled all the columns, move to 2.
+//     x = 1
+//     a) Start at column x
+//     b) For each row in the column, check if the current position is ok
+//     c) If position is ok, place queen there and go to a) where x = x + 1
+//     d) Else, go to next row
+//     e) If there is no safe row, backtrack to the previous column and try the next row
+// 2. Check the solution to see if it contains the start position
+//     a) If so, we have our solution
+//     b) Else, start at 1 with the next configuration
