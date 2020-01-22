@@ -47,27 +47,43 @@ function parsePosition(coordinates) {
  * @param {Array} coordinates 
  */
 function stringifyPosition(coordinates) {
-
-    if (coordinates[0] === 0) {
-        coordinates[0] = 10;
-    }
-
-    if (coordinates[1] === 10) {
-        coordinates[1] = 0;
-    }
-
     return [
-        (coordinates[0] + 9).toString(36),
-        coordinates[1]
+        coordinates[0] === 0 ? 'j' : (coordinates[0] + 9).toString(36),
+        coordinates[1] === 10 ? 0 : coordinates[1]
     ].join('');
-
 }
 
-// probably use the constraint programming solution https://developers.google.com/optimization/cp/queens
+/**
+ * Checks a single square on a board to check if it is valid
+ * @param {Array} boardMatrix The current state of the board
+ * @param {Number} row Row coordinate to check
+ * @param {Number} column Column coordinate to check
+ * @param {Number} N The amount of queens / board size
+ */
+function checkPosition(boardMatrix, row, column, N) {
+    // Fail if the column is in use
+    for (let i = 0; i < row; i++) {
+        if (boardMatrix[i][column]) {
+            return false;
+        }
+    }
 
-// We are given the first entry in the solution. Because of this, we can't use a stair-stepped
-// solution, or standard backtracking.
+    // Fail if the top diagonal is in use
+    for (let i = row, j = column; i >= 0 && j >= 0; i--, j--){
+        if (board[i][j]) {
+            return false;
+        }
+    }
 
+    // Fail if the bottom diagonal is in use
+    for(let i = row, j = col; j >= 0 && i < N; i++, j--){
+        if (board[i][j] === "q") {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 // 1. Find the first solution
 //     if we have filled all the columns, move to 2.
