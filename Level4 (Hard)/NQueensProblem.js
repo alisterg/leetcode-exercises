@@ -13,13 +13,26 @@
  * The chessboard size will only be of size 1-10
  */
 
+// TODO clean up
+
 function queens(position, size) {
     if (size === 2 || size === 3) {
         // No solution for these cases
         return null;
     }
 
-    // First we need to parse the starting position into an array
+    // Find -all- solutions; if any contain our starting position then return that one.
+
+    // Generate starting board
+    const defaultBoard = [];
+
+    for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
+            defaultBoard [i][j] = false;
+        }
+    }
+
+    solveQueens(defaultBoard, 0, size);
 
     return "a1";
 }
@@ -77,7 +90,7 @@ function checkPosition(boardMatrix, row, column, N) {
 
     // Fail if the bottom diagonal is in use
     for(let i = row, j = col; j >= 0 && i < N; i++, j--){
-        if (board[i][j] === "q") {
+        if (board[i][j]) {
             return false;
         }
     }
@@ -85,14 +98,18 @@ function checkPosition(boardMatrix, row, column, N) {
     return true;
 }
 
-// 1. Find the first solution
-//     if we have filled all the columns, move to 2.
-//     x = 1
-//     a) Start at column x
-//     b) For each row in the column, check if the current position is ok
-//     c) If position is ok, place queen there and go to a) where x = x + 1
-//     d) Else, go to next row
-//     e) If there is no safe row, backtrack to the previous column and try the next row
-// 2. Check the solution to see if it contains the start position
-//     a) If so, we have our solution
-//     b) Else, start at 1 with the next configuration
+function solveQueens(boardMatrix, row, N) {
+    if (row == N) {
+        // TODO Solution is complete, check it for our starting position
+    }
+
+    for (let i = 0; i < N; i++) {
+        if (checkPosition(boardMatrix, row, i)) {
+            boardMatrix[row][i] = true;
+
+            solveQueens(boardMatrix, row + 1, N);
+
+            boardMatrix[row][i] = true; // Backtrack for next solution
+        }
+    }
+}
