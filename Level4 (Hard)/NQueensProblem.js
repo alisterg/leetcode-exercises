@@ -13,7 +13,8 @@
  * The chessboard size will only be of size 1-10
  */
 
-// TODO clean up
+// TODO run through linter and clean up
+
 
 function queens(position, size) {
     if (size === 2 || size === 3) {
@@ -21,95 +22,155 @@ function queens(position, size) {
         return null;
     }
 
-    // Find -all- solutions; if any contain our starting position then return that one.
+    const queenSolver = new nQueens(size, position);
 
-    // Generate starting board
-    const defaultBoard = [];
-
-    for (let i = 0; i < size; i++) {
-        for (let j = 0; j < size; j++) {
-            defaultBoard [i][j] = false;
-        }
-    }
-
-    solveQueens(defaultBoard, 0, size);
-
-    return "a1";
+    return queenSolver.solveQueens(queenSolver.defaultBoard, 0);
 }
 
-/**
- * Converts a string into a pair eg. 'a3' into [1,3]
- * @param {string} coordinates 
- */
-function parsePosition(coordinates) {
-    const arr = coordinates.split('');
+class nQueens {
+    constructor(boardSize, startPosition) {
+        this.boardSize = boardSize;
+        this.startPosition = this.parsePosition(startPosition);
+    }
 
-    // 'J' is column 10 (represented by zero)
-    arr[0] = arr[0].toLowerCase() === 'j' ?
-        arr[0].toLowerCase().charCodeAt() - 96 :
-        0;
+    /**
+     * Generates starting board matrix (all values false)
+     */
+    get defaultBoard() {
+        const defaultBoard = [];
 
-    arr[1] = Number(arr[1]);
+        for (let i = 0; i < this.boardSize; i++) {
+            if (!defaultBoard[i]) {
+                defaultBoard[i] = [];
+            }
 
-    return arr;
-}
+            for (let j = 0; j < this.boardSize; j++) {
+                defaultBoard [i][j] = false;
+            }
+        }
 
-/**
- * Converts a pair into a string eg. [1,3] into 'a3'.
- * If pair[0] is '0', then it converts it to 'j'
- * @param {Array} coordinates 
- */
-function stringifyPosition(coordinates) {
-    return [
-        coordinates[0] === 0 ? 'j' : (coordinates[0] + 9).toString(36),
-        coordinates[1] === 10 ? 0 : coordinates[1]
-    ].join('');
-}
+        return defaultBoard;
+    }
 
-/**
- * Checks a single square on a board to check if it is valid
- * @param {Array} boardMatrix The current state of the board
- * @param {Number} row Row coordinate to check
- * @param {Number} column Column coordinate to check
- * @param {Number} N The amount of queens / board size
- */
-function checkPosition(boardMatrix, row, column, N) {
-    // Fail if the column is in use
-    for (let i = 0; i < row; i++) {
-        if (boardMatrix[i][column]) {
-            return false;
+    /**
+     * Recursively solves the N queens problem. Uses a backtracking method to
+     * find all possible solutions, until a solution is found that includes our 
+     * starting position.
+     * @param {Array} boardMatrix The board
+     * @param {Number} row Current row
+     */
+    solveQueens(boardMatrix, row) {
+        if (row == this.boardSize) {
+            // Solution is complete, check it for our starting position
+            for (let i = 0; i < this.boardSize; i++) {
+                // i is row, j is column
+                if (boardMatrix[i] !== this.startPosition[1]) {
+                    continue;
+                }
+
+                for (let j = 0; j < this.boardSize; j++) {
+                    if (boardMatrix[i][j] === this.startPosition[0]) {
+                        return generateSolutionStringFromMatrix(boardMatrix);
+                    }
+                }
+            }
+        }
+
+        for (let i = 0; i < this.boardSize; i++) {
+            if (checkPosition(boardMatrix, row, i)) {
+                boardMatrix[row][i] = true;
+
+                solveQueens(boardMatrix, row + 1, this.boardSize);
+
+                boardMatrix[row][i] = true; // Backtrack for next solution
+            }
         }
     }
 
-    // Fail if the top diagonal is in use
-    for (let i = row, j = column; i >= 0 && j >= 0; i--, j--){
-        if (board[i][j]) {
-            return false;
+    /**
+     * Generates the final solution given a board matrix
+     * @param {Array} boardMatrix The board matrix
+     */
+    generateSolutionStringFromMatrix(boardMatrix) {
+        let final = '';
+
+        for (let i = 0; i < this.boardSize; i++) { // i = row
+            for (let j = 0; j < this.boardSize; j++) { // j = col
+                if (boardMatrix[i][j]) {
+                    final += stringifyColumnPosition(j) + (i + 1);
+                }
+            }
         }
+
+        return final;
     }
 
-    // Fail if the bottom diagonal is in use
-    for(let i = row, j = col; j >= 0 && i < N; i++, j--){
-        if (board[i][j]) {
-            return false;
-        }
+    /**
+     * Converts a column position into its letter equivalent
+     * eg. 0 will become 'a', 9 will become 'j' etc
+     * @param {Number} position The zero-based column position
+     */
+    stringifyColumnPosition(position) {
+        return position === 9 ? 'j' : (position + 10).toString(36);
     }
 
-    return true;
-}
+    /**
+     * Checks a single square on a board to check if it is valid
+     * @param {Array} boardMatrix The current state of the board
+     * @param {Number} row Row coordinate to check
+     * @param {Number} column Column coordinate to check
+     */
+    checkPosition(boardMatrix, row, column) {
+        // Fail if the column is in use
+        for (let i = 0; i < row; i++) {
+            if (boardMatrix[i][column]) {
+                return false;
+            }
+        }
 
-function solveQueens(boardMatrix, row, N) {
-    if (row == N) {
-        // TODO Solution is complete, check it for our starting position
+        // Fail if the top diagonal is in use
+        for (let i = row, j = column; i >= 0 && j >= 0; i--, j--){
+            if (board[i][j]) {
+                return false;
+            }
+        }
+
+        // Fail if the bottom diagonal is in use
+        for(let i = row, j = col; j >= 0 && i < this.boardSize; i++, j--){
+            if (board[i][j]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    
+    /**
+     * Converts a string into a pair eg. 'a3' into [1,3]
+     * @param {string} coordinates 
+     */
+    parsePosition(coordinates) {
+        const arr = coordinates.split('');
+
+        // 'J' is column 10 (represented by zero)
+        arr[0] = arr[0].toLowerCase() === 'j' ?
+            arr[0].toLowerCase().charCodeAt() - 96 :
+            0;
+
+        arr[1] = Number(arr[1]);
+
+        return arr;
     }
 
-    for (let i = 0; i < N; i++) {
-        if (checkPosition(boardMatrix, row, i)) {
-            boardMatrix[row][i] = true;
-
-            solveQueens(boardMatrix, row + 1, N);
-
-            boardMatrix[row][i] = true; // Backtrack for next solution
-        }
+    /**
+     * Converts a pair into a string eg. [1,3] into 'a3'.
+     * If pair[0] is '0', then it converts it to 'j'
+     * @param {Array} coordinates 
+     */
+    stringifyPosition(coordinates) {
+        return [
+            coordinates[0] === 0 ? 'j' : (coordinates[0] + 9).toString(36),
+            coordinates[1] === 10 ? 0 : coordinates[1]
+        ].join('');
     }
 }
