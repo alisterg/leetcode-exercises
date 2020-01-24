@@ -64,9 +64,9 @@ class nQueens {
             }
         }
 
-        for (let i = 0; i < this.boardSize; i++) {
-            if (this.checkPosition(boardMatrix, row, i)) {
-                boardMatrix[row][i] = true;
+        for (let column = 0; column < this.boardSize; column++) {
+            if (this.checkPosition(boardMatrix, row, column)) {
+                boardMatrix[row][column] = true;
 
                 this.solveQueens(boardMatrix, row + 1, this.boardSize);
 
@@ -74,7 +74,7 @@ class nQueens {
                     return this.finalSolution;
                 }
 
-                boardMatrix[row][i] = false; // Backtrack for next solution
+                boardMatrix[row][column] = false; // Backtrack for next solution
             }
         }
     }
@@ -115,22 +115,22 @@ class nQueens {
      */
     checkPosition(boardMatrix, row, column) {
         // Fail if the column is in use
-        for (let i = 0; i < row; i++) {
-            if (boardMatrix[i][column]) {
+        for (let rowToCheck = 0; rowToCheck < row; rowToCheck++) {
+            if (boardMatrix[rowToCheck][column]) {
                 return false;
             }
         }
 // TODO this is failing somewhere
         // Fail if the top diagonal is in use
-        for (let i = row, j = column; i >= 0 && j >= 0; i--, j--){
-            if (boardMatrix[i][j]) {
+        for (let rowToCheck = row, columnToCheck = column; rowToCheck >= 0 && columnToCheck >= 0; rowToCheck--, columnToCheck--){
+            if (boardMatrix[rowToCheck][columnToCheck]) {
                 return false;
             }
         }
 
         // Fail if the bottom diagonal is in use
-        for(let i = row, j = column; j >= 0 && i < this.boardSize; i++, j--){
-            if (boardMatrix[i][j]) {
+        for(let rowToCheck = row, columnToCheck = column; columnToCheck >= 0 && rowToCheck < this.boardSize; rowToCheck++, columnToCheck--){
+            if (boardMatrix[rowToCheck][columnToCheck]) {
                 return false;
             }
         }
