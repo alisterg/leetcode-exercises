@@ -1,4 +1,4 @@
-/**
+/*
  * The N-Queens Problem is a well known mathematical problem.
  * https://en.wikipedia.org/wiki/Eight_queens_puzzle
  * 
@@ -12,20 +12,6 @@
  * 
  * The chessboard size will only be of size 1-10
  */
-
-// TODO run through linter and clean up
-
-
-function queens(position, size) {
-    if (size === 2 || size === 3) {
-        // No solution for these cases
-        return null;
-    }
-
-    const queenSolver = new nQueens(size, position);
-
-    return queenSolver.solveQueens(queenSolver.defaultBoard, 0);
-}
 
 class nQueens {
     constructor(boardSize, startPosition) {
@@ -64,25 +50,26 @@ class nQueens {
             // Solution is complete, check it for our starting position
             for (let i = 0; i < this.boardSize; i++) {
                 // i is row, j is column
-                if (boardMatrix[i] !== this.startPosition[1]) {
+                if (i !== this.startPosition[1]) {
                     continue;
                 }
 
+                // TODO I think I need to flip this array
                 for (let j = 0; j < this.boardSize; j++) {
                     if (boardMatrix[i][j] === this.startPosition[0]) {
-                        return generateSolutionStringFromMatrix(boardMatrix);
+                        return this.generateSolutionStringFromMatrix(boardMatrix);
                     }
                 }
             }
         }
 
         for (let i = 0; i < this.boardSize; i++) {
-            if (checkPosition(boardMatrix, row, i)) {
+            if (this.checkPosition(boardMatrix, row, i)) {
                 boardMatrix[row][i] = true;
 
-                solveQueens(boardMatrix, row + 1, this.boardSize);
+                this.solveQueens(boardMatrix, row + 1, this.boardSize);
 
-                boardMatrix[row][i] = true; // Backtrack for next solution
+                boardMatrix[row][i] = false; // Backtrack for next solution
             }
         }
     }
@@ -97,7 +84,7 @@ class nQueens {
         for (let i = 0; i < this.boardSize; i++) { // i = row
             for (let j = 0; j < this.boardSize; j++) { // j = col
                 if (boardMatrix[i][j]) {
-                    final += stringifyColumnPosition(j) + (i + 1);
+                    final += this.stringifyColumnPosition(j) + (i + 1);
                 }
             }
         }
@@ -130,14 +117,14 @@ class nQueens {
 
         // Fail if the top diagonal is in use
         for (let i = row, j = column; i >= 0 && j >= 0; i--, j--){
-            if (board[i][j]) {
+            if (boardMatrix[i][j]) {
                 return false;
             }
         }
 
         // Fail if the bottom diagonal is in use
-        for(let i = row, j = col; j >= 0 && i < this.boardSize; i++, j--){
-            if (board[i][j]) {
+        for(let i = row, j = column; j >= 0 && i < this.boardSize; i++, j--){
+            if (boardMatrix[i][j]) {
                 return false;
             }
         }
@@ -154,8 +141,8 @@ class nQueens {
 
         // 'J' is column 10 (represented by zero)
         arr[0] = arr[0].toLowerCase() === 'j' ?
-            arr[0].toLowerCase().charCodeAt() - 96 :
-            0;
+            0 :
+            arr[0].toLowerCase().charCodeAt() - 97;
 
         arr[1] = Number(arr[1]);
 
@@ -173,4 +160,15 @@ class nQueens {
             coordinates[1] === 10 ? 0 : coordinates[1]
         ].join('');
     }
+}
+
+function queens(position, size) {
+    if (size === 2 || size === 3) {
+        // No solution for these cases
+        return null;
+    }
+
+    const queenSolver = new nQueens(size, position);
+
+    return queenSolver.solveQueens(queenSolver.defaultBoard, 0);
 }
