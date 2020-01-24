@@ -14,9 +14,10 @@
  */
 
 class nQueens {
-    constructor(boardSize, startPosition) {
+    constructor(startPosition, boardSize) {
         this.boardSize = boardSize;
-        this.startPosition = this.parsePosition(startPosition);
+        this.startPosition = this.parseStartPosition(startPosition);
+        this.finalSolution = null;
     }
 
     /**
@@ -54,10 +55,10 @@ class nQueens {
                     continue;
                 }
 
-                // TODO I think I need to flip this array
                 for (let j = 0; j < this.boardSize; j++) {
-                    if (boardMatrix[i][j] === this.startPosition[0]) {
-                        return this.generateSolutionStringFromMatrix(boardMatrix);
+                    if (j === this.startPosition[0] && boardMatrix[i][j]) {
+                        this.finalSolution = this.generateSolutionStringFromMatrix(boardMatrix);
+                        return this.finalSolution;
                     }
                 }
             }
@@ -68,6 +69,10 @@ class nQueens {
                 boardMatrix[row][i] = true;
 
                 this.solveQueens(boardMatrix, row + 1, this.boardSize);
+
+                if (this.finalSolution) {
+                    return this.finalSolution;
+                }
 
                 boardMatrix[row][i] = false; // Backtrack for next solution
             }
@@ -84,12 +89,13 @@ class nQueens {
         for (let i = 0; i < this.boardSize; i++) { // i = row
             for (let j = 0; j < this.boardSize; j++) { // j = col
                 if (boardMatrix[i][j]) {
-                    final += this.stringifyColumnPosition(j) + (i + 1);
+                    const flippedRow = this.boardSize - i;
+                    final += this.stringifyColumnPosition(j) + flippedRow + ',';
                 }
             }
         }
 
-        return final;
+        return final.slice(0, -1);
     }
 
     /**
@@ -114,7 +120,7 @@ class nQueens {
                 return false;
             }
         }
-
+// TODO this is failing somewhere
         // Fail if the top diagonal is in use
         for (let i = row, j = column; i >= 0 && j >= 0; i--, j--){
             if (boardMatrix[i][j]) {
@@ -136,7 +142,7 @@ class nQueens {
      * Converts a string into a pair eg. 'a3' into [1,3]
      * @param {string} coordinates 
      */
-    parsePosition(coordinates) {
+    parseStartPosition(coordinates) {
         const arr = coordinates.split('');
 
         // 'J' is column 10 (represented by zero)
@@ -144,31 +150,20 @@ class nQueens {
             0 :
             arr[0].toLowerCase().charCodeAt() - 97;
 
-        arr[1] = Number(arr[1]);
+        // need to 'flip' the row because 1 is the bottom row
+        arr[1] = this.boardSize - Number(arr[1]);
 
         return arr;
-    }
-
-    /**
-     * Converts a pair into a string eg. [1,3] into 'a3'.
-     * If pair[0] is '0', then it converts it to 'j'
-     * @param {Array} coordinates 
-     */
-    stringifyPosition(coordinates) {
-        return [
-            coordinates[0] === 0 ? 'j' : (coordinates[0] + 9).toString(36),
-            coordinates[1] === 10 ? 0 : coordinates[1]
-        ].join('');
     }
 }
 
 function queens(position, size) {
     if (size === 2 || size === 3) {
         // No solution for these cases
-        return null;
+        return position;
     }
 
-    const queenSolver = new nQueens(size, position);
+    const queenSolver = new nQueens(position, size);
 
     return queenSolver.solveQueens(queenSolver.defaultBoard, 0);
 }
