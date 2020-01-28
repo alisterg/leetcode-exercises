@@ -13,6 +13,8 @@
  * The chessboard size will only be of size 1-10
  */
 
+// Isn't working for N=10; must be a bug with the parsing
+
 class nQueens {
     constructor(startPosition, boardSize) {
         this.boardSize = boardSize;
@@ -120,7 +122,7 @@ class nQueens {
                 return false;
             }
         }
-// TODO this is failing somewhere
+
         // Fail if the top diagonal is in use
         for (let rowToCheck = row, columnToCheck = column; rowToCheck >= 0 && columnToCheck >= 0; rowToCheck--, columnToCheck--){
             if (boardMatrix[rowToCheck][columnToCheck]) {
@@ -129,7 +131,7 @@ class nQueens {
         }
 
         // Fail if the bottom diagonal is in use
-        for(let rowToCheck = row, columnToCheck = column; columnToCheck >= 0 && rowToCheck < this.boardSize; rowToCheck++, columnToCheck--){
+        for(let rowToCheck = row, columnToCheck = column; rowToCheck >= 0 && columnToCheck< this.boardSize; rowToCheck--, columnToCheck++){
             if (boardMatrix[rowToCheck][columnToCheck]) {
                 return false;
             }
