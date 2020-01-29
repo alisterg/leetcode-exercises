@@ -6,14 +6,13 @@
  * none of the queens are threatening another.
  * 
  * In this challenge, we are given the position of one queen on the
- * board in the format 'c3' (column c, row 3). We need to compute the
- * positions of the other queens and return a comma-separated string
- * of coordinates, eg 'c3,a7,e6...etc'.
+ * board in the format 'c3' (column c, row 3). NOTE: row 1 is the bottom row.
+ * 
+ * We need to compute the positions of the other queens and return a 
+ * comma-separated string of coordinates, eg 'c3,a7,e6...etc'.
  * 
  * The chessboard size will only be of size 1-10
  */
-
-// Isn't working for N=10; must be a bug with the parsing
 
 class nQueens {
     constructor(startPosition, boardSize) {
@@ -82,7 +81,7 @@ class nQueens {
     }
 
     /**
-     * Generates the final solution given a board matrix
+     * Generates the final solution given a board matrix.
      * @param {Array} boardMatrix The board matrix
      */
     generateSolutionStringFromMatrix(boardMatrix) {
@@ -91,7 +90,9 @@ class nQueens {
         for (let i = 0; i < this.boardSize; i++) { // i = row
             for (let j = 0; j < this.boardSize; j++) { // j = col
                 if (boardMatrix[i][j]) {
-                    const flippedRow = this.boardSize - i;
+                    let flippedRow = this.boardSize - i;
+                    if (flippedRow === 10) flippedRow = 0;
+
                     final += this.stringifyColumnPosition(j) + flippedRow + ',';
                 }
             }
@@ -101,7 +102,7 @@ class nQueens {
     }
 
     /**
-     * Converts a column position into its letter equivalent
+     * Converts a column position into its letter equivalent.
      * eg. 0 will become 'a', 9 will become 'j' etc
      * @param {Number} position The zero-based column position
      */
@@ -110,7 +111,7 @@ class nQueens {
     }
 
     /**
-     * Checks a single square on a board to check if it is valid
+     * Checks a single square on a board to check if it is valid.
      * @param {Array} boardMatrix The current state of the board
      * @param {Number} row Row coordinate to check
      * @param {Number} column Column coordinate to check
@@ -123,15 +124,15 @@ class nQueens {
             }
         }
 
-        // Fail if the top diagonal is in use
+        // Fail if the left diagonal is in use
         for (let rowToCheck = row, columnToCheck = column; rowToCheck >= 0 && columnToCheck >= 0; rowToCheck--, columnToCheck--){
             if (boardMatrix[rowToCheck][columnToCheck]) {
                 return false;
             }
         }
 
-        // Fail if the bottom diagonal is in use
-        for(let rowToCheck = row, columnToCheck = column; rowToCheck >= 0 && columnToCheck< this.boardSize; rowToCheck--, columnToCheck++){
+        // Fail if the right diagonal is in use
+        for(let rowToCheck = row, columnToCheck = column; rowToCheck >= 0 && columnToCheck < this.boardSize; rowToCheck--, columnToCheck++){
             if (boardMatrix[rowToCheck][columnToCheck]) {
                 return false;
             }
@@ -149,11 +150,13 @@ class nQueens {
 
         // 'J' is column 10 (represented by zero)
         arr[0] = arr[0].toLowerCase() === 'j' ?
-            0 :
+            9 :
             arr[0].toLowerCase().charCodeAt() - 97;
 
         // need to 'flip' the row because 1 is the bottom row
         arr[1] = this.boardSize - Number(arr[1]);
+
+        if (arr[1] === 10) arr[1] = 0;
 
         return arr;
     }
