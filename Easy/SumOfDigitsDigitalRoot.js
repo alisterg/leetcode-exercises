@@ -1,6 +1,4 @@
 /*
- * Sum of Digits / Digital Root: 6kyu
- * 
  * A digital root is the recursive sum of all the digits in a number. 
  * Given n, take the sum of the digits of n. 
  * If that value has more than one digit, continue reducing in this way 
