@@ -18,7 +18,7 @@ var addTwoNumbers = function(l1, l2) {
     let listOneNumber = convertListToNumberString(l1);
     let listTwoNumber = convertListToNumberString(l2);
 
-    let finalValue = +listOneNumber + +listTwoNumber;
+    let finalValue = BigInt(listOneNumber) + BigInt(listTwoNumber);
     finalValue = finalValue.toString().split('');
 
     return convertNumberArrayToLinkedList(finalValue.reverse());
