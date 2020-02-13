@@ -5,7 +5,10 @@
  *     this.next = null;
  * }
  */
+
 /**
+ * Adds two numbers, each of which are represented by linked 
+ * lists (with each node representing a digit)
  * @param {ListNode} l1
  * @param {ListNode} l2
  * @return {ListNode}
@@ -16,9 +19,9 @@ var addTwoNumbers = function(l1, l2) {
     let listTwoNumber = convertListToNumberString(l2);
 
     let finalValue = +listOneNumber + +listTwoNumber;
-    finalValue = finalValue.toString().split('').reverse();
+    finalValue = finalValue.toString().split('');
 
-    // TODO convert back to linked list
+    return convertNumberArrayToLinkedList(finalValue.reverse());
 };
 
 function convertListToNumberString(list, acc = "") {
@@ -35,11 +38,20 @@ function convertListToNumberString(list, acc = "") {
     return convertListToNumberString(list.next, acc + list.val);
 }
 
+/**
+ * Converts an array representing a single integer into a 
+ * reversed linked list (with each node representing a digit)
+ * @param {Array} numbers eg. [1,2,3] represents 123
+ */
 function convertNumberArrayToLinkedList(numbers) {
     
+    let node = null;
 
-    // for (let i = 0; i < numbers.length; i++) {
-    //     let currentNode = new ListNode(numbers[i]);
-    //     currentNode.next = numbers[i + 1]
-    // }
+    for (let i = numbers.length - 1; i >= 0; i--) {
+        let next = node;
+        node = new ListNode(numbers[i]);
+        node.next = next;
+    }
+
+    return node;
 }
