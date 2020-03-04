@@ -6,31 +6,24 @@
  */
 var longestValidParentheses = function(parenthesesString) {
 
-    let openParenth = 0;
-    let currentPairs = 0;
-    let longestPair = 0;
-    
+    let stack = [-1];
+    let result = 0;
+
     for (let i = 0; i < parenthesesString.length; i++) {
-     
-        if (parenthesesString[i] == '(') {
-            openParenth++; 
-        }
-        else if (parenthesesString[i] == ')') {
-            if (openParenth > 0) {
-                openParenth--;
-                currentPairs++;
-            }
-            else {
-                if (currentPairs * 2 > longestPair) {
-                    longestPair = currentPairs * 2;
-                }
-    
-                currentPairs = 0;
-                openParenth = 0;
+        if (parenthesesString[i] === '(') {
+            stack.push(i);
+        } else {
+            stack.pop();
+
+            if (stack.length > 0) {
+                let currentSubstringLen = i - stack[stack.length - 1];
+
+                result = result >= currentSubstringLen ? result : currentSubstringLen;
+            } else {
+                stack.push(i);
             }
         }
     }
 
-    return longestPair;
+    return result;
 };
-
