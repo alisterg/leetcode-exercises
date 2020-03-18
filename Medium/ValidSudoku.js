@@ -11,20 +11,36 @@ const isValidSudoku = function(board) {
     
     // Validate each row
     for (let i = 0; i < 9; i++) {
-        if (!validateSingleArray(board)) return false;
+        if (!validateSingleArray(board[i])) return false;
     }
 
     // Validate each column
     for (let i = 0; i < 9; i++) {
         const currentColumn = [];
-        board.map(currentRow => currentColumn.push(currentRow[i]));
+        board.forEach(currentRow => {
+            currentColumn.push(currentRow[i]);
+        });
 
         if (!validateSingleArray(currentColumn)) return false;
     }
 
     // Validate each square
-    // Get multiarray of each square
-    // Check each for duplicates / out of range
+    const squares = [];
+    for (let i = 0; i < 3; i++) {
+        board.forEach(row => {
+            for (let j = 0; j < 3; j++) {
+                squares.push(row.shift());
+            }
+        });
+    }
+
+    for (let i = 0; i < 9; i++) {
+        let currSlice = squares.slice(i * 9, i * 9 + 9);
+
+        if (!validateSingleArray(currSlice)) return false;
+    }
+
+    return true;
 };
 
 /**
